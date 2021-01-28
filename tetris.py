@@ -99,6 +99,7 @@ class Block:
 		self.setx =[]
 		self.sety =[]
 		self.allow =0
+		self.rate = 0
 		self.initialize()
 	def initialize(self):	
 		for m in range(3):
@@ -137,11 +138,12 @@ class Block:
 			else:
 				self.bb = self.b[self.random_index]	
 								
+	def draw(self):
+		for i,j in zip(self.setx ,self.sety): 
+			pygame.draw.rect(win,self.color,(i,j, self.width, self.width))
 
 	def	move(self):
 		global new
-		for i,j in zip(self.setx ,self.sety): 
-			pygame.draw.rect(win,self.color,(i,j, self.width, self.width))
 		n=0	
 		for	j in self.sety:
 			if j<base_height:
@@ -159,7 +161,7 @@ class Block:
 		global new
 		for a in settled:
 			for i ,j in zip(self.setx, self.sety):
-				if((j + 20 == a[1]) and (i == a[0])):
+				if((j +20 == a[1]) and (i == a[0])):
 					new = True
 
 	def moveleft(self):
@@ -174,6 +176,7 @@ class Block:
 			self.setx[i] = self.setx[i] -20
 		if self.x>100:		
 			self.x = self.x-20
+
 			
 	def moveright(self):
 		for x in self.setx:
@@ -271,72 +274,90 @@ block = Block()
 n =False
 i=0
 clk =pygame.time.Clock()
-def draw_win():
+
+def draw_win(oc):
 	global block
 	global score
 	global new
 	global run
 	global n
 	global i
-	win.fill((0,0,0))
-	if n==False:
-		if not new:
-			block.move()
-	tetris()
-	score_board()
-	if n==False:
-		if new:
-			i=0
-			for i,j in zip(block.setx,block.sety):
-				settled.append([i,j, block.color])
-			new_block()
-			remove()
-			if gameover():
-				n=True
-				settled.clear()
-				
 
-			new =False
-		for b in settled :
-			placed(b[0],b[1],b[2])
-	if n==True:
-		go(score)	
-		score = 0	
-	game_grid()		
-	pygame.time.delay(30)
+	win.fill((0,0,0))
+	
+	if oc==3:
+		block.check_collisions()
+		# print("h")
+		if n==False:
+			if not new:
+				block.move()				
+			if new:
+				i=0
+				for i,j in zip(block.setx,block.sety):
+					settled.append([i,j, block.color])
+				new_block()
+				remove()
+				if gameover():
+					n=True
+					settled.clear()
+				new =False
+		if n==True:
+			go(score)	
+			score = 0	
+	block.draw()
+	for b in settled :
+		placed(b[0],b[1],b[2])		
+	game_grid()	
+	tetris()
+	score_board()	
+	pygame.time.delay(3)
 	pygame.display.update()
+
 	if n==True: 	
 		time.sleep(3)
 		n=False
 
 highscore =0
 score =0
+
 def main():
 	run=True
 	global score
 	global highscore
 	score=0
-
+	oc = 0
 	while run:
-		clk.tick(4)
+		clk.tick(20)
+
 		for event in pygame.event.get():
 			if event.type==pygame.QUIT:
 				run = False
-						
+			if event.type ==pygame.KEYDOWN:
+				if event.key ==pygame.K_LEFT:
+					block.moveleft()	
+
+				if event.key == pygame.K_RIGHT:
+					block.moveright()
+
+				if event.key ==pygame.K_SPACE:
+					block.reinitialize()	
+							
 
 		keys = pygame.key.get_pressed()
-		
-		if keys[pygame.K_LEFT]:
-			block.moveleft()	
+		# if keys[pygame.K_LEFT]:
+		# 	block.moveleft()	
 
-		if keys[pygame.K_RIGHT]:
-			block.moveright()
+		# if keys[pygame.K_RIGHT]:
+		# 	block.moveright()
 
-		if keys[pygame.K_SPACE]:
-			block.reinitialize()	
-				
-		block.check_collisions()				
-		draw_win()		
+		# if keys[pygame.K_SPACE]	:
+		# 	block.reinitialize()
+			
+						
+		draw_win(oc);
+		oc+=1
+		if oc==4:
+			oc = 0	
 
 	pygame.quit()
 
