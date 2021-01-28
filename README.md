@@ -2,8 +2,8 @@
 Tetris is a tile matching game developed by Alexey Pajitnov in 1984, which became very popular video game at 80s. I have tried design it using pygame library of python.This repository contains the python code for the game.
 
 ## Controls: 
- *LEFT and RIGHT Key to move pieces Left and Right respectively.
- *SPACEBAR to rotate the pieces in clockwise direction.
+ * LEFT and RIGHT Key to move pieces Left and Right respectively.
+ * SPACEBAR to rotate the pieces in clockwise direction.
 
 ## This is a screenshot of how the game looks.
 
